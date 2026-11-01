@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "./services/api";
+import Login from "./pages/Login";
 
 function App() {
   const [message, setMessage] = useState("Connecting...");
@@ -22,6 +23,7 @@ function App() {
     <div>
       <h1>Frontend-Backend Connection</h1>
       <p>{message}</p>
+      <Login />;
     </div>
   );
 }
