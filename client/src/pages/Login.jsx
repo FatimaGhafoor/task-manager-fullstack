@@ -4,9 +4,16 @@ import api from "../services/api";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setError("");
+    setSuccess("");
+    setLoading(true);
 
     try {
       const response = await api.post("/auth/login", {
@@ -14,16 +21,20 @@ function Login() {
         password,
       });
 
-      console.log("Login successful!");
-      console.log("User:", response.data.user);
+      setSuccess(`Login Successful! ${response.data.user.name}`);
     } catch (error) {
-      console.error("Login failed:", error.response?.data?.message);
+      setError(`Login failed: ${error.response?.data?.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
       <h1>Login</h1>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {success && <p style={{ color: "green" }}>{success}</p>}
 
       <form onSubmit={handleSubmit}>
         <input
@@ -40,7 +51,9 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
       </form>
     </div>
   );
