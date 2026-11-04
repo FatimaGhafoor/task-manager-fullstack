@@ -21,6 +21,8 @@ function Login() {
         password,
       });
 
+      localStorage.setItem("token", response.data.token);
+
       setSuccess(`Login Successful! ${response.data.user.name}`);
     } catch (error) {
       setError(`Login failed: ${error.response?.data?.message}`);
