@@ -16,14 +16,23 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/login", {
+      const postResponse = await api.post("/auth/login", {
         email,
         password,
       });
 
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", postResponse.data.token);
+      setSuccess(`Login Successful! ${postResponse.data.user.name}`);
 
-      setSuccess(`Login Successful! ${response.data.user.name}`);
+      const token = localStorage.getItem("token");
+
+      const taskResponse = await api.get("/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(taskResponse.data);
     } catch (error) {
       setError(`Login failed: ${error.response?.data?.message}`);
     } finally {
