@@ -26,13 +26,13 @@ function Login() {
 
       const token = localStorage.getItem("token");
 
-      const taskResponse = await api.get("/tasks", {
+      const tasksResponse = await api.get("/tasks", {
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
         },
       });
 
-      console.log(taskResponse.data);
+      console.log(tasksResponse.data);
     } catch (error) {
       setError(`Login failed: ${error.response?.data?.message}`);
     } finally {
