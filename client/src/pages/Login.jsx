@@ -24,8 +24,6 @@ function Login() {
       localStorage.setItem("token", postResponse.data.token);
       setSuccess(`Login Successful! ${postResponse.data.user.name}`);
 
-      const token = localStorage.getItem("token");
-
       const tasksResponse = await api.get("/tasks", {
         headers: {
           "Cache-Control": "no-cache",
