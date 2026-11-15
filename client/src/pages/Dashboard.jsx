@@ -26,6 +26,8 @@ function Dashboard() {
 
   const handleEdit = (task) => {
     setEditingTask(task);
+    setSubmitError("");
+    setSuccess("");
 
     setFormData({
       title: task.title,
