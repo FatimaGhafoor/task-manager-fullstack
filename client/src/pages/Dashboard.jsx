@@ -127,7 +127,13 @@ function Dashboard() {
         <ul>
           {tasks.map((task) => (
             <li key={task._id}>
-              {task.title}, {task.description}, {task.status}
+              <p>{task.title}</p>
+              <p>{task.description}</p>
+              <p>{task.status}</p>
+
+              <button type="button" onClick={() => handleEdit(task)}>
+                Edit
+              </button>
             </li>
           ))}
         </ul>
