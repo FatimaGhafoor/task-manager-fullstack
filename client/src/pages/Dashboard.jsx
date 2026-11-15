@@ -13,6 +13,7 @@ function Dashboard() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState("");
   const [submitError, setSubmitError] = useState("");
+  const [editingTask, setEditingTask] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,6 +24,29 @@ function Dashboard() {
     }));
   };
 
+  const handleEdit = (task) => {
+    setEditingTask(task);
+
+    setFormData({
+      title: task.title,
+      description: task.description,
+      status: task.status,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTask(null);
+
+    setFormData({
+      title: "",
+      description: "",
+      status: "pending",
+    });
+
+    setSubmitError("");
+    setSuccess("");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -31,11 +55,24 @@ function Dashboard() {
     setSuccess("");
 
     try {
-      const response = await api.post("/tasks", formData);
+      if (editingTask) {
+        const response = await api.put(`/tasks/${editingTask._id}`, formData);
 
-      setTasks((prevTasks) => [...prevTasks, response.data.data]);
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task._id === editingTask._id ? response.data.data : task,
+          ),
+        );
 
-      setSuccess("Task created successfully!");
+        setSuccess("Task updated successfully!");
+        setEditingTask(null);
+      } else {
+        const response = await api.post("/tasks", formData);
+
+        setTasks((prevTasks) => [...prevTasks, response.data.data]);
+
+        setSuccess("Task created successfully!");
+      }
 
       setFormData({
         title: "",
@@ -43,7 +80,7 @@ function Dashboard() {
         status: "pending",
       });
     } catch (error) {
-      setSubmitError(error.response?.data?.message || "Failed to create task");
+      setSubmitError(error.response?.data?.message || "Failed to save task");
     } finally {
       setSubmitting(false);
     }
@@ -70,7 +107,7 @@ function Dashboard() {
       <h1>Dashboard</h1>
       <p>Welcome! You are successfully logged in.</p>
       <form onSubmit={handleSubmit}>
-        <h2>Create New Task</h2>
+        <h2>{editingTask ? "Edit Task" : "Create New Task"}</h2>
 
         <div>
           <label htmlFor="title">Title</label>
@@ -110,8 +147,20 @@ function Dashboard() {
         </div>
 
         <button type="submit" disabled={submitting}>
-          {submitting ? "Creating..." : "Create Task"}
+          {submitting
+            ? editingTask
+              ? "Updating..."
+              : "Creating..."
+            : editingTask
+              ? "Update Task"
+              : "Create Task"}
         </button>
+
+        {editingTask && (
+          <button type="button" onClick={handleCancelEdit}>
+            Cancel
+          </button>
+        )}
       </form>
 
       {submitError && <p>{submitError}</p>}
