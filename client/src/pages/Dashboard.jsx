@@ -14,6 +14,8 @@ function Dashboard() {
   const [success, setSuccess] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [editingTask, setEditingTask] = useState(null);
+  const [deletingTaskId, setDeletingTaskId] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,6 +49,32 @@ function Dashboard() {
 
     setSubmitError("");
     setSuccess("");
+  };
+
+  const handleDelete = async (task) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${task.title}"?`,
+    );
+
+    if (!confirmed) return;
+
+    setDeletingTaskId(task._id);
+    setDeleteError("");
+    setSuccess("");
+
+    try {
+      await api.delete(`/tasks/${task._id}`);
+
+      setTasks((prevTasks) =>
+        prevTasks.filter((item) => item._id !== task._id),
+      );
+
+      setSuccess("Task deleted successfully!");
+    } catch (error) {
+      setDeleteError(error.response?.data?.message || "Failed to delete task");
+    } finally {
+      setDeletingTaskId(null);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -166,6 +194,7 @@ function Dashboard() {
       </form>
 
       {submitError && <p>{submitError}</p>}
+      {deleteError && <p>{deleteError}</p>}
       {success && <p>{success}</p>}
 
       {loading ? (
@@ -184,6 +213,13 @@ function Dashboard() {
 
               <button type="button" onClick={() => handleEdit(task)}>
                 Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDelete(task)}
+                disabled={deletingTaskId === task._id}
+              >
+                {deletingTaskId === task._id ? "Deleting..." : "Delete"}
               </button>
             </li>
           ))}
