@@ -16,6 +16,19 @@ function Dashboard() {
   const [editingTask, setEditingTask] = useState(null);
   const [deletingTaskId, setDeletingTaskId] = useState(null);
   const [deleteError, setDeleteError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
+      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || task.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
