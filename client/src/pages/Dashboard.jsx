@@ -149,6 +149,31 @@ function Dashboard() {
     <div>
       <h1>Dashboard</h1>
       <p>Welcome! You are successfully logged in.</p>
+      <div>
+        <label htmlFor="search">Search Tasks</label>
+        <input
+          type="text"
+          id="search"
+          placeholder="Search by title or description..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      <div>
+        <label htmlFor="statusFilter">Filter by Status</label>
+        <select
+          id="statusFilter"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="all">All Tasks</option>
+          <option value="pending">Pending</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <h2>{editingTask ? "Edit Task" : "Create New Task"}</h2>
 
@@ -214,11 +239,11 @@ function Dashboard() {
         <p>Loading tasks...</p>
       ) : error ? (
         <p>{error}</p>
-      ) : tasks.length === 0 ? (
-        <p>No tasks found. Create your first task!</p>
+      ) : filteredTasks.length === 0 ? (
+        <p>No matching tasks found.</p>
       ) : (
         <ul>
-          {tasks.map((task) => (
+          {filteredTasks.map((task) => (
             <li key={task._id}>
               <p>{task.title}</p>
               <p>{task.description}</p>
