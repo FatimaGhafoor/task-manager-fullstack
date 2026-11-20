@@ -239,8 +239,10 @@ function Dashboard() {
         <p>Loading tasks...</p>
       ) : error ? (
         <p>{error}</p>
+      ) : tasks.length === 0 ? (
+        <p>No tasks found. Create your first task!</p>
       ) : filteredTasks.length === 0 ? (
-        <p>No matching tasks found.</p>
+        <p>No matching tasks found. Try changing your search or filter.</p>
       ) : (
         <ul>
           {filteredTasks.map((task) => (
