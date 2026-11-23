@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 function Dashboard() {
+  const navigate = useNavigate();
+
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -18,6 +21,11 @@ function Dashboard() {
   const [deleteError, setDeleteError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login", { replace: true });
+  };
 
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
@@ -149,6 +157,11 @@ function Dashboard() {
     <div>
       <h1>Dashboard</h1>
       <p>Welcome! You are successfully logged in.</p>
+
+      <button type="button" onClick={handleLogout}>
+        Logout
+      </button>
+
       <div>
         <label htmlFor="search">Search Tasks</label>
         <input
@@ -254,6 +267,7 @@ function Dashboard() {
               <button type="button" onClick={() => handleEdit(task)}>
                 Edit
               </button>
+
               <button
                 type="button"
                 onClick={() => handleDelete(task)}
