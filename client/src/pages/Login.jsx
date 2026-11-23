@@ -41,35 +41,57 @@ function Login() {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <main className="login-page">
+      <section className="login-card">
+        <div className="login-header">
+          <div className="login-logo">TM</div>
+          <h1>Welcome back</h1>
+          <p>Sign in to manage your tasks</p>
+        </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && (
+          <div className="login-error" role="alert">
+            {error}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-          required
-        />
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email address</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              required
+            />
+          </div>
 
-        <input
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
-          required
-        />
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              required
+            />
+          </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
-    </div>
+          <button className="login-button" type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Sign in"}
+          </button>
+        </form>
+
+        <p className="login-footer">
+          Task Manager — Stay organized, stay productive.
+        </p>
+      </section>
+    </main>
   );
 }
 
