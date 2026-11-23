@@ -287,16 +287,6 @@ Authorization header format:
 Authorization: Bearer <your_jwt_token>
 ```
 
-## API Documentation
-
-Swagger UI provides interactive API documentation.
-
-Visit:
-
-https://task-manager-fullstack-95ih.vercel.app/api-docs/
-
-You can explore available endpoints and test API requests using the Swagger interface.
-
 ## Validation and Error Handling
 
 - Zod is used for request validation.
