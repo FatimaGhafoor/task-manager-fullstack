@@ -5,6 +5,7 @@ const taskRoutes = require("./routes/taskRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
+const connectDB = require("./config/db");
 
 const app = express();
 
@@ -15,6 +16,15 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use("/api", async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 const swaggerOptions = {
   swaggerDefinition: {
