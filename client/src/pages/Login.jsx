@@ -1,38 +1,40 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 function Login() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
-    setSuccess("");
     setLoading(true);
 
     try {
-      const postResponse = await api.post("/auth/login", {
+      const response = await api.post("/auth/login", {
         email,
         password,
       });
 
-      localStorage.setItem("token", postResponse.data.token);
-      setSuccess(`Login Successful! ${postResponse.data.user.name}`);
+      const { token } = response.data;
 
-      const tasksResponse = await api.get("/tasks", {
-        headers: {
-          "Cache-Control": "no-cache",
-        },
-      });
+      localStorage.setItem("token", token);
 
-      console.log(tasksResponse.data);
+      navigate("/dashboard", { replace: true });
     } catch (error) {
-      setError(`Login failed: ${error.response?.data?.message}`);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Please try again.";
+
+      setError(`Login failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -43,7 +45,6 @@ function Login() {
       <h1>Login</h1>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
 
       <form onSubmit={handleSubmit}>
         <input
@@ -51,6 +52,8 @@ function Login() {
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
+          required
         />
 
         <input
@@ -58,6 +61,8 @@ function Login() {
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
+          required
         />
 
         <button type="submit" disabled={loading}>
