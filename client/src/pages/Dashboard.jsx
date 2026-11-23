@@ -153,133 +153,231 @@ function Dashboard() {
     fetchTasks();
   }, []);
 
+  const formatStatus = (status) => {
+    const labels = {
+      pending: "Pending",
+      "in-progress": "In Progress",
+      completed: "Completed",
+    };
+
+    return labels[status] || status;
+  };
+
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <p>Welcome! You are successfully logged in.</p>
+    <main className="dashboard-page">
+      <div className="dashboard-container">
+        <header className="dashboard-header">
+          <div>
+            <span className="dashboard-eyebrow">TASK MANAGER</span>
+            <h1>My Dashboard</h1>
+            <p>Welcome! Manage your tasks and stay productive.</p>
+          </div>
 
-      <button type="button" onClick={handleLogout}>
-        Logout
-      </button>
-
-      <div>
-        <label htmlFor="search">Search Tasks</label>
-        <input
-          type="text"
-          id="search"
-          placeholder="Search by title or description..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="statusFilter">Filter by Status</label>
-        <select
-          id="statusFilter"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="all">All Tasks</option>
-          <option value="pending">Pending</option>
-          <option value="in-progress">In Progress</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        <h2>{editingTask ? "Edit Task" : "Create New Task"}</h2>
-
-        <div>
-          <label htmlFor="title">Title</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="status">Status</label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
+          <button
+            className="logout-button"
+            type="button"
+            onClick={handleLogout}
           >
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-
-        <button type="submit" disabled={submitting}>
-          {submitting
-            ? editingTask
-              ? "Updating..."
-              : "Creating..."
-            : editingTask
-              ? "Update Task"
-              : "Create Task"}
-        </button>
-
-        {editingTask && (
-          <button type="button" onClick={handleCancelEdit}>
-            Cancel
+            Logout
           </button>
-        )}
-      </form>
+        </header>
 
-      {submitError && <p>{submitError}</p>}
-      {deleteError && <p>{deleteError}</p>}
-      {success && <p>{success}</p>}
+        <section className="dashboard-toolbar">
+          <div className="form-group">
+            <label htmlFor="search">Search Tasks</label>
+            <input
+              type="text"
+              id="search"
+              placeholder="Search by title or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
-      {loading ? (
-        <p>Loading tasks...</p>
-      ) : error ? (
-        <p>{error}</p>
-      ) : tasks.length === 0 ? (
-        <p>No tasks found. Create your first task!</p>
-      ) : filteredTasks.length === 0 ? (
-        <p>No matching tasks found. Try changing your search or filter.</p>
-      ) : (
-        <ul>
-          {filteredTasks.map((task) => (
-            <li key={task._id}>
-              <p>{task.title}</p>
-              <p>{task.description}</p>
-              <p>{task.status}</p>
+          <div className="form-group">
+            <label htmlFor="statusFilter">Filter by Status</label>
+            <select
+              id="statusFilter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="all">All Tasks</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </section>
 
-              <button type="button" onClick={() => handleEdit(task)}>
-                Edit
-              </button>
+        <section className="task-form-card">
+          <div className="section-heading">
+            <h2>{editingTask ? "Edit Task" : "Create a New Task"}</h2>
+            <p>
+              {editingTask
+                ? "Update the details of your task."
+                : "Add a task to keep track of your work."}
+            </p>
+          </div>
 
-              <button
-                type="button"
-                onClick={() => handleDelete(task)}
-                disabled={deletingTaskId === task._id}
+          <form className="task-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="title">Task Title</label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="e.g. Complete project documentation"
+                value={formData.title}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                placeholder="Add some details about this task..."
+                value={formData.description}
+                onChange={handleChange}
+                required
+                rows={3}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="status">Status</label>
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
               >
-                {deletingTaskId === task._id ? "Deleting..." : "Delete"}
+                <option value="pending">Pending</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+
+            <div className="task-form-actions">
+              <button
+                className="primary-button"
+                type="submit"
+                disabled={submitting}
+              >
+                {submitting
+                  ? editingTask
+                    ? "Updating..."
+                    : "Creating..."
+                  : editingTask
+                    ? "Update Task"
+                    : "Create Task"}
               </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+
+              {editingTask && (
+                <button
+                  className="secondary-button"
+                  type="button"
+                  onClick={handleCancelEdit}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </section>
+
+        <section className="task-list-section">
+          <div className="task-list-heading">
+            <div>
+              <h2>Your Tasks</h2>
+              <p>
+                {filteredTasks.length}{" "}
+                {filteredTasks.length === 1 ? "task" : "tasks"} displayed
+              </p>
+            </div>
+          </div>
+
+          {(success || submitError || deleteError) && (
+            <div className="dashboard-feedback">
+              {success && (
+                <p className="feedback-success" role="status">
+                  {success}
+                </p>
+              )}
+
+              {submitError && (
+                <p className="feedback-error" role="alert">
+                  {submitError}
+                </p>
+              )}
+
+              {deleteError && (
+                <p className="feedback-error" role="alert">
+                  {deleteError}
+                </p>
+              )}
+            </div>
+          )}
+
+          {loading ? (
+            <div className="dashboard-empty-state">
+              <p>Loading your tasks...</p>
+            </div>
+          ) : error ? (
+            <div className="dashboard-empty-state">
+              <p className="feedback-error">{error}</p>
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="dashboard-empty-state">
+              <h3>No tasks yet</h3>
+              <p>Create your first task to get started.</p>
+            </div>
+          ) : filteredTasks.length === 0 ? (
+            <div className="dashboard-empty-state">
+              <h3>No matching tasks</h3>
+              <p>Try changing your search or status filter.</p>
+            </div>
+          ) : (
+            <ul className="task-grid">
+              {filteredTasks.map((task) => (
+                <li className="task-card" key={task._id}>
+                  <div className="task-card-header">
+                    <h3>{task.title}</h3>
+
+                    <span className={`task-status status-${task.status}`}>
+                      {formatStatus(task.status)}
+                    </span>
+                  </div>
+
+                  <p className="task-description">{task.description}</p>
+
+                  <div className="task-card-actions">
+                    <button
+                      className="secondary-button"
+                      type="button"
+                      onClick={() => handleEdit(task)}
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      className="danger-button"
+                      type="button"
+                      onClick={() => handleDelete(task)}
+                      disabled={deletingTaskId === task._id}
+                    >
+                      {deletingTaskId === task._id ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+    </main>
   );
 }
 
