@@ -12,7 +12,12 @@ function App() {
   useEffect(() => {
     const checkServer = async () => {
       try {
-        const response = await api.get("http://localhost:5000/");
+        const backendURL = import.meta.env.VITE_API_URL.replace(
+          /\/api\/?$/,
+          "",
+        );
+
+        const response = await api.get(`${backendURL}/`);
         setMessage(response.data.message);
       } catch (error) {
         console.error("API Error:", error.message);
